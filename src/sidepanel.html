@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Engineer</title>
+<link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>⚡ Prompt Engineer</h1>
+    <p>Paste a prompt → <strong>BOOST</strong> for an instant rewrite, or <strong>Q&amp;A</strong> for a short clarifying session.</p>
+  </header>
+
+  <div id="banner" class="banner"></div>
+
+  <div class="card">
+    <h2>Settings</h2>
+    <div class="field">
+      <label for="providerSelect">Provider</label>
+      <select id="providerSelect">
+        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="openai">OpenAI (GPT)</option>
+        <option value="google">Google (Gemini)</option>
+        <option value="mistral">Mistral</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:10px;">
+      <label for="modelSelect">Model</label>
+      <div class="model-row">
+        <select id="modelSelect"></select>
+        <button class="icon-btn" id="updateModels" type="button" title="Fetch the current model list from every provider you have a key for">↻ Update</button>
+      </div>
+      <div class="model-meta" id="modelMeta"></div>
+    </div>
+    <div class="field hidden" id="customModelField" style="margin-top:10px;">
+      <label for="customModel">Custom model ID</label>
+      <input type="text" id="customModel" placeholder="e.g. claude-sonnet-5-5">
+    </div>
+    <div class="field" style="margin-top:14px;">
+      <label for="apiKey" id="keyLabel">API key</label>
+      <div class="key-row">
+        <input type="password" id="apiKey" autocomplete="off">
+        <button class="icon-btn" id="toggleKey" type="button" title="Show / hide key">👁</button>
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.78rem;color:var(--muted);cursor:pointer;">
+        <input type="checkbox" id="rememberKey" style="width:14px;height:14px;">
+        Remember keys on this device
+      </label>
+      <div class="hint" id="keyHint"></div>
+    </div>
+    <div class="guide-note" id="guideNote"></div>
+  </div>
+
+  <div class="card">
+    <h2>Your prompt</h2>
+    <textarea id="promptInput" placeholder="Paste your current prompt here..."></textarea>
+    <div class="meta-row">
+      <span class="char-count" id="charCount">0 characters</span>
+      <button class="clear-link" id="clearPrompt" type="button">Clear</button>
+    </div>
+    <div class="actions">
+      <button class="primary" id="boostBtn" type="button">🚀 BOOST</button>
+      <button class="primary" id="qaBtn" type="button">💬 Q&amp;A</button>
+    </div>
+  </div>
+
+  <div class="card hidden" id="boostCard">
+    <div class="result-header">
+      <h2 style="margin:0;">Improved prompt</h2>
+      <button class="copy-btn" id="copyBoost" type="button">Copy</button>
+    </div>
+    <div id="boostContent"></div>
+  </div>
+
+  <div class="card hidden" id="qaCard">
+    <h2>Q&amp;A session</h2>
+    <div class="chat-container" id="chatContainer"></div>
+    <div class="chat-input-row">
+      <textarea id="chatInput" placeholder="Type your answer... (Enter = send, Shift+Enter = new line)"></textarea>
+    </div>
+    <div class="chat-buttons">
+      <button class="send" id="sendChat" type="button">Send</button>
+      <button class="finalize" id="finalizeChat" type="button">✅ Generate final prompt</button>
+    </div>
+  </div>
+
+  <footer>
+    Requests go straight from your browser to the selected provider. No other server is involved.
+  </footer>
+
+</div>
+<script type="module" src="sidepanel.js"></script>
+</body>
+</html>
