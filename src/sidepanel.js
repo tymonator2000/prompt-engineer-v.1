@@ -1,4 +1,4 @@
-import { PROVIDERS, callLLM, listModels } from "./providers.js";
+import { PROVIDERS, callLLM, listModels, defaultModels } from "./providers.js";
 import { GUIDES } from "./guides.js";
 import { boostSystemPrompt, qaSystemPrompt, FINALIZE_INSTRUCTION } from "./prompts.js";
 import { local, session, read, onSessionChange } from "./storage.js";
@@ -34,7 +34,7 @@ async function loadState() {
   Object.assign(state.modelByProvider, settings.modelByProvider || {});
   state.customModel = settings.customModel || "";
   state.remember = !!settings.remember;
-  state.modelLists = await read(local, "modelLists", {});
+  state.modelLists = await read(local, "modelTiers", {});
   const keys = await read(state.remember ? local : session, "keys", {});
   Object.assign(state.keys, keys);
 }
@@ -64,8 +64,7 @@ function captureCurrent() {
 // ---------- Rendering ----------
 function modelsFor(provider) {
   const live = state.modelLists[provider];
-  if (live?.models?.length) return live.models.map(m => [m.id, m.label]);
-  return PROVIDERS[provider].models;
+  return live?.models?.length ? live.models : defaultModels(provider);
 }
 
 function timeAgo(ts) {
@@ -83,7 +82,7 @@ function renderProviderUI() {
   const g = GUIDES[provider];
 
   modelSelect.innerHTML = "";
-  for (const [id, label] of modelsFor(provider)) modelSelect.add(new Option(label, id));
+  for (const { id, label } of modelsFor(provider)) modelSelect.add(new Option(label, id));
   modelSelect.add(new Option("Other (enter ID)", "__custom__"));
   const saved = state.modelByProvider[provider];
   const valid = saved && [...modelSelect.options].some(o => o.value === saved);
@@ -92,8 +91,8 @@ function renderProviderUI() {
 
   const live = state.modelLists[provider];
   $("modelMeta").textContent = live?.updatedAt
-    ? `Live list from ${p.name}, updated ${timeAgo(live.updatedAt)}.`
-    : "Built-in list. Click Update to fetch the current one.";
+    ? `Latest versions from ${p.name}, checked ${timeAgo(live.updatedAt)}.`
+    : "Built-in list. Click Update to check for newer versions.";
 
   apiKeyInput.value = state.keys[provider] || "";
   apiKeyInput.placeholder = p.placeholder;
@@ -181,13 +180,13 @@ $("updateModels").addEventListener("click", async () => {
   results.forEach((r, i) => {
     const id = withKeys[i];
     if (r.status === "fulfilled") {
-      state.modelLists[id] = { models: r.value.map(({ id, label }) => ({ id, label })), updatedAt: Date.now() };
-      ok.push(`${PROVIDERS[id].name} (${r.value.length})`);
+      state.modelLists[id] = { models: r.value, updatedAt: Date.now() };
+      ok.push(PROVIDERS[id].name);
     } else {
       failed.push(r.reason?.message || PROVIDERS[id].name);
     }
   });
-  await local.set({ modelLists: state.modelLists });
+  await local.set({ modelTiers: state.modelLists });
   setBusy(btn, false, "↻ Update");
   renderProviderUI();
   await saveState();

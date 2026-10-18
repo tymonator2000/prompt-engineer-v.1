@@ -9,7 +9,17 @@ Web version (single HTML file): [tymonator2000/prompt-engineer](https://github.c
 - **🚀 BOOST**: one click gives you an improved prompt, the techniques applied and a short rationale.
 - **💬 Q&A**: the model asks 3-5 clarifying questions, then **Generate final prompt** builds a version tailored to your answers.
 - **Provider-specific guidance**: the rewrite follows the guide of the selected model's provider (Claude → Anthropic, GPT → OpenAI, Gemini → Google, Mistral → Mistral AI). See `src/guides.js`.
-- **↻ Update models**: fetches the current model list from every provider you have a key for and caches it locally.
+- **Cheap models only**: prompt rewriting doesn't need flagship models, so each provider offers just two tiers (cheapest is the default):
+
+  | Provider | Fast, cheapest | Better quality |
+  |---|---|---|
+  | Anthropic | Claude Haiku 5.5 | Claude Sonnet 5.5 |
+  | OpenAI | GPT-6 Luna | GPT-6.1 Sol |
+  | Google | Gemini 3.5 Flash-Lite | Gemini 3.8 Flash |
+  | Mistral | Mistral Small 4 | Mistral Medium 3.5 |
+
+  "Other (enter ID)" is still there if you really want a different model.
+- **↻ Update models**: checks every provider you have a key for and swaps in the newest version of each tier (e.g. a future Haiku 6). Flagship models are never added.
 - **Right-click → Improve prompt with Prompt Engineer**: sends selected text on any page to the side panel.
 - The prompt keeps its original language (Polish stays Polish). The interface is in English.
 
@@ -64,6 +74,6 @@ scripts/package.sh  # builds the upload zip
 
 ## Adding a provider
 
-1. Add an entry to `PROVIDERS` in `providers.js` and branches in `callLLM` and `listModels`.
+1. Add an entry to `PROVIDERS` in `providers.js` (with its two `tiers`) and branches in `callLLM` and `listModels`.
 2. Add its guide to `GUIDES` in `guides.js`.
 3. Add an `<option>` to `#providerSelect`, a key slot in `state.keys` / `state.modelByProvider`, and its API host to `host_permissions` in `manifest.json`.

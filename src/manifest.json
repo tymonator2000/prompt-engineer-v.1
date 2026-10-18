@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Prompt Engineer",
   "short_name": "Prompt Engineer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Rewrite your prompts using the official guides from Anthropic, OpenAI, Google and Mistral. Bring your own API key.",
   "minimum_chrome_version": "116",
   "action": {

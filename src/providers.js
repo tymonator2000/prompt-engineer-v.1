@@ -1,17 +1,18 @@
 // Provider config, chat calls and model listing.
 // Default model lists are a fallback; "Update models" replaces them with the provider's live list.
 
+// Only the cheaper tiers: prompt rewriting doesn't need flagship models, so we don't burn
+// the user's API budget on them. Each provider has two tiers, cheapest first (the default).
+// `match` picks the tier's models out of the provider's live list on "Update models".
 export const PROVIDERS = {
   anthropic: {
     name: "Anthropic",
     placeholder: "sk-ant-...",
     keyUrl: "https://platform.claude.com/settings/keys",
     apiHost: "api.anthropic.com",
-    models: [
-      ["claude-sonnet-5-5", "Claude Sonnet 5.5 (recommended)"],
-      ["claude-opus-5-5", "Claude Opus 5.5"],
-      ["claude-fable-5-1", "Claude Fable 5.1 (most capable, slower)"],
-      ["claude-haiku-5-5", "Claude Haiku 5.5 (fastest)"]
+    tiers: [
+      { id: "claude-haiku-5-5", label: "Claude Haiku 5.5", note: "fast, cheapest", match: m => (m.line || m.id).includes("haiku") },
+      { id: "claude-sonnet-5-5", label: "Claude Sonnet 5.5", note: "better quality", match: m => (m.line || m.id).includes("sonnet") }
     ]
   },
   openai: {
@@ -19,10 +20,9 @@ export const PROVIDERS = {
     placeholder: "sk-...",
     keyUrl: "https://platform.openai.com/api-keys",
     apiHost: "api.openai.com",
-    models: [
-      ["gpt-6.1-sol", "GPT-6.1 Sol (balanced)"],
-      ["gpt-6-astra", "GPT-6 Astra (most capable)"],
-      ["gpt-6-luna", "GPT-6 Luna (cheapest)"]
+    tiers: [
+      { id: "gpt-6-luna", label: "GPT-6 Luna", note: "fast, cheapest", match: m => /^gpt-[\d.]+-luna$/.test(m.id) },
+      { id: "gpt-6.1-sol", label: "GPT-6.1 Sol", note: "better quality", match: m => /^gpt-[\d.]+-sol$/.test(m.id) }
     ]
   },
   google: {
@@ -30,10 +30,9 @@ export const PROVIDERS = {
     placeholder: "AIza...",
     keyUrl: "https://aistudio.google.com/apikey",
     apiHost: "generativelanguage.googleapis.com",
-    models: [
-      ["gemini-3.8-flash", "Gemini 3.8 Flash (latest)"],
-      ["gemini-3.7-flash", "Gemini 3.7 Flash"],
-      ["gemini-3.5-flash", "Gemini 3.5 Flash"]
+    tiers: [
+      { id: "gemini-3.5-flash-lite", label: "Gemini 3.5 Flash-Lite", note: "fast, cheapest", match: m => /^gemini-[\d.]+-flash-lite$/.test(m.id) },
+      { id: "gemini-3.8-flash", label: "Gemini 3.8 Flash", note: "better quality", match: m => /^gemini-[\d.]+-flash$/.test(m.id) }
     ]
   },
   mistral: {
@@ -41,13 +40,23 @@ export const PROVIDERS = {
     placeholder: "Mistral API key",
     keyUrl: "https://console.mistral.ai/api-keys",
     apiHost: "api.mistral.ai",
-    models: [
-      ["mistral-medium-3-5-26-04", "Mistral Medium 3.5 (flagship)"],
-      ["mistral-small-4-0-26-03", "Mistral Small 4 (fast, cheap)"],
-      ["mistral-large-3-25-12", "Mistral Large 3 (open-weight)"]
+    tiers: [
+      { id: "mistral-small-4-0-26-03", label: "Mistral Small 4", note: "fast, cheapest", match: m => /^mistral-small-[\d-]+$/.test(m.id) },
+      { id: "mistral-medium-3-5-26-04", label: "Mistral Medium 3.5", note: "better quality", match: m => /^mistral-medium-[\d-]+$/.test(m.id) }
     ]
   }
 };
+
+export function tierOption(tier, model) {
+  const id = model?.id || tier.id;
+  // Prefer the API's display name; fall back to our label for the known id, else the raw id.
+  const name = model && model.label !== model.id ? model.label : (id === tier.id ? tier.label : id);
+  return { id, label: `${name} (${tier.note})` };
+}
+
+export function defaultModels(provider) {
+  return PROVIDERS[provider].tiers.map(t => tierOption(t));
+}
 
 const ANTHROPIC_VERSION = "2023-06-01";
 
@@ -139,39 +148,33 @@ export async function callLLM({ provider, apiKey, model, messages, systemPrompt 
 
 // ---------- Model listing ("Update models") ----------
 
-// OpenAI's /v1/models returns every model type; keep only text chat models.
-const OPENAI_EXCLUDE = /(embed|tts|whisper|dall-e|image|audio|realtime|transcribe|moderation|search|instruct|davinci|babbage|codex|computer-use|sora)/i;
-const GOOGLE_EXCLUDE = /(embed|tts|image|aqa|live|native-audio|imagen|veo)/i;
-
-// Returns [{ id, label, created }] sorted newest first.
+// Fetches the provider's live model list and returns the newest model of each tier,
+// as [{ id, label }]. A tier with no match keeps its built-in default.
 export async function listModels(provider, apiKey) {
   const p = PROVIDERS[provider];
   if (!apiKey) throw new Error(`${p.name}: no API key.`);
-  let models = [];
+  let models = [];   // { id, label, line?, created }
 
   if (provider === "anthropic") {
     const data = await request(provider, "https://api.anthropic.com/v1/models?limit=1000", {
       headers: anthropicHeaders(apiKey)
     });
     models = (data.data || []).map(m => ({
-      id: m.id, label: m.display_name || m.id, created: Date.parse(m.created_at) || 0
+      id: m.id, label: m.display_name || m.id, line: m.line || "", created: Date.parse(m.created_at) || 0
     }));
   } else if (provider === "openai") {
     const data = await request(provider, "https://api.openai.com/v1/models", {
       headers: { "authorization": `Bearer ${apiKey}` }
     });
-    models = (data.data || [])
-      .filter(m => /^(gpt-|o\d|chatgpt-)/i.test(m.id) && !OPENAI_EXCLUDE.test(m.id))
-      .map(m => ({ id: m.id, label: m.id, created: (m.created || 0) * 1000 }));
+    models = (data.data || []).map(m => ({ id: m.id, label: m.id, created: (m.created || 0) * 1000 }));
   } else if (provider === "google") {
     let pageToken = "";
     do {
       const url = `https://generativelanguage.googleapis.com/v1beta/models?pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ""}`;
       const data = await request(provider, url, { headers: { "x-goog-api-key": apiKey } });
       for (const m of data.models || []) {
-        const id = (m.name || "").replace(/^models\//, "");
-        if (!/^gemini/i.test(id) || GOOGLE_EXCLUDE.test(id)) continue;
         if (!(m.supportedGenerationMethods || []).includes("generateContent")) continue;
+        const id = (m.name || "").replace(/^models\//, "");
         models.push({ id, label: m.displayName || id, created: 0 });
       }
       pageToken = data.nextPageToken || "";
@@ -185,14 +188,11 @@ export async function listModels(provider, apiKey) {
       .filter(m => m.capabilities?.completion_chat !== false)
       .filter(m => !m.deprecation || Date.parse(m.deprecation) > now)
       .filter(m => !m.archived)
-      .map(m => ({ id: m.id, label: m.name && m.name !== m.id ? `${m.name} (${m.id})` : m.id, created: (m.created || 0) * 1000 }));
+      .map(m => ({ id: m.id, label: m.name || m.id, created: (m.created || 0) * 1000 }));
   }
 
-  // Dedupe by id. Sort: newest first when the API gives dates, otherwise by id descending
-  // (provider ids carry version numbers, so this roughly puts newer versions first).
-  const seen = new Set();
-  models = models.filter(m => !seen.has(m.id) && seen.add(m.id));
+  // Newest first: by API date, then by id (ids carry version numbers, e.g. gemini-3.8 > gemini-3.5).
   models.sort((a, b) => (b.created - a.created) || b.id.localeCompare(a.id, undefined, { numeric: true }));
-  if (!models.length) throw new Error(`${p.name}: the API returned no chat models.`);
-  return models;
+  if (!models.length) throw new Error(`${p.name}: the API returned no models.`);
+  return p.tiers.map(t => tierOption(t, models.find(t.match)));
 }
