@@ -1,12 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "Prompt Engineer",
-  "short_name": "Prompt Engineer",
-  "version": "1.0.1",
-  "description": "Rewrite your prompts using the official guides from Anthropic, OpenAI, Google and Mistral. Bring your own API key.",
+  "name": "Arkanum",
+  "short_name": "Arkanum",
+  "version": "1.1.0",
+  "description": "Księga Zaklęć Promptowych. Ulepszaj prompty według oficjalnych wytycznych Anthropic, OpenAI, Google i Mistral. Bring your own API key.",
   "minimum_chrome_version": "116",
   "action": {
-    "default_title": "Open Prompt Engineer",
+    "default_title": "Otwórz Arkanum",
     "default_icon": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png" }
   },
   "icons": { "16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png" },
