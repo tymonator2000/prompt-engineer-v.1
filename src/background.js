@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
   chrome.contextMenus.create({
     id: MENU_ID,
-    title: "Improve prompt with Prompt Engineer",
+    title: "Ulepsz prompt w Arkanum",
     contexts: ["selection"]
   });
 });

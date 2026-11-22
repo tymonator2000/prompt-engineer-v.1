@@ -1,25 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prompt Engineer</title>
+<title>Arkanum</title>
 <link rel="stylesheet" href="sidepanel.css">
 </head>
 <body>
 <div class="wrap">
 
   <header>
-    <h1>⚡ Prompt Engineer</h1>
-    <p>Paste a prompt → <strong>BOOST</strong> for an instant rewrite, or <strong>Q&amp;A</strong> for a short clarifying session.</p>
+    <div class="trio-container">
+      <!-- Left Helper: Imp -->
+      <svg class="sprite-imp" width="44" height="44" viewBox="0 0 16 16">
+        <rect x="4" y="2" width="1" height="2" fill="#ff2a2a"/>
+        <rect x="11" y="2" width="1" height="2" fill="#ff2a2a"/>
+        <rect x="2" y="5" width="2" height="3" fill="#660a12"/>
+        <rect x="1" y="6" width="2" height="4" fill="#a81320"/>
+        <rect x="12" y="5" width="2" height="3" fill="#660a12"/>
+        <rect x="13" y="6" width="2" height="4" fill="#a81320"/>
+        <rect x="5" y="3" width="6" height="5" fill="#2b090e"/>
+        <rect x="6" y="8" width="4" height="5" fill="#1f070b"/>
+        <rect x="6" y="5" width="1" height="1" fill="#ff3333"/>
+        <rect x="9" y="5" width="1" height="1" fill="#ff3333"/>
+        <rect x="5" y="13" width="2" height="2" fill="#ff2a2a"/>
+        <rect x="9" y="13" width="2" height="2" fill="#ff2a2a"/>
+        <rect x="3" y="12" width="2" height="1" fill="#ff2a2a"/>
+        <rect x="2" y="10" width="1" height="2" fill="#ff2a2a"/>
+      </svg>
+
+      <!-- Center: Gandalf Wizard -->
+      <svg class="sprite-wizard" width="74" height="74" viewBox="0 0 24 24">
+        <rect x="18" y="7" width="1" height="15" fill="#5a3818"/>
+        <rect x="17" y="4" width="3" height="3" fill="#ff1e27"/>
+        <rect x="18" y="5" width="1" height="1" fill="#ffffff"/>
+        <rect x="16" y="5" width="1" height="1" fill="#ff6b6b"/>
+        <rect x="19" y="5" width="1" height="1" fill="#990000"/>
+        <rect x="9" y="1" width="2" height="2" fill="#2d1519"/>
+        <rect x="8" y="3" width="4" height="2" fill="#52151c"/>
+        <rect x="7" y="5" width="6" height="2" fill="#6b151f"/>
+        <rect x="6" y="7" width="8" height="1" fill="#e61919"/>
+        <rect x="3" y="8" width="14" height="2" fill="#3d1419"/>
+        <rect x="4" y="8" width="12" height="1" fill="#801923"/>
+        <rect x="7" y="10" width="6" height="2" fill="#d9a07a"/>
+        <rect x="8" y="10" width="1" height="1" fill="#ff2a2a"/>
+        <rect x="11" y="10" width="1" height="1" fill="#ff2a2a"/>
+        <rect x="9" y="10" width="2" height="1" fill="#2d1519"/>
+        <rect x="6" y="11" width="8" height="2" fill="#e2e4ea"/>
+        <rect x="7" y="13" width="6" height="3" fill="#ffffff"/>
+        <rect x="8" y="16" width="4" height="2" fill="#e2e4ea"/>
+        <rect x="9" y="18" width="2" height="2" fill="#b0b4c0"/>
+        <rect x="5" y="13" width="2" height="9" fill="#1e0a0d"/>
+        <rect x="13" y="13" width="2" height="9" fill="#1e0a0d"/>
+        <rect x="7" y="18" width="6" height="4" fill="#120608"/>
+        <rect x="4" y="14" width="2" height="3" fill="#8b0000"/>
+        <rect x="14" y="14" width="2" height="3" fill="#8b0000"/>
+      </svg>
+
+      <!-- Right Helper: Shadow Knight -->
+      <svg class="sprite-knight" width="44" height="44" viewBox="0 0 16 16">
+        <rect x="4" y="1" width="1" height="2" fill="#8b0000"/>
+        <rect x="11" y="1" width="1" height="2" fill="#8b0000"/>
+        <rect x="5" y="2" width="6" height="6" fill="#1e1e24"/>
+        <rect x="6" y="5" width="4" height="1" fill="#ff2a2a"/>
+        <rect x="5" y="8" width="6" height="5" fill="#121216"/>
+        <rect x="3" y="8" width="2" height="3" fill="#52151c"/>
+        <rect x="11" y="8" width="2" height="3" fill="#52151c"/>
+        <rect x="2" y="6" width="1" height="7" fill="#b0b4c0"/>
+        <rect x="1" y="11" width="3" height="1" fill="#ff2a2a"/>
+        <rect x="12" y="9" width="3" height="4" fill="#801923"/>
+        <rect x="13" y="10" width="1" height="2" fill="#ff4d4d"/>
+        <rect x="5" y="13" width="2" height="2" fill="#1a1a20"/>
+        <rect x="9" y="13" width="2" height="2" fill="#1a1a20"/>
+      </svg>
+    </div>
+    <h1>ARKANUM</h1>
   </header>
 
   <div id="banner" class="banner"></div>
 
   <div class="card">
-    <h2>Settings</h2>
+    <h2>[ KONFIGURACJA RUN ]</h2>
     <div class="field">
-      <label for="providerSelect">Provider</label>
+      <label for="providerSelect">WYROCZNIA (PROVIDER)</label>
       <select id="providerSelect">
         <option value="anthropic">Anthropic (Claude)</option>
         <option value="openai">OpenAI (GPT)</option>
@@ -28,26 +91,26 @@
       </select>
     </div>
     <div class="field" style="margin-top:10px;">
-      <label for="modelSelect">Model</label>
+      <label for="modelSelect">STOPIEŃ MOCY (MODEL)</label>
       <div class="model-row">
         <select id="modelSelect"></select>
-        <button class="icon-btn" id="updateModels" type="button" title="Fetch the current model list from every provider you have a key for">↻ Update</button>
+        <button class="icon-btn" id="updateModels" type="button" title="Pobierz aktualne wersje modeli">UPDATE</button>
       </div>
       <div class="model-meta" id="modelMeta"></div>
     </div>
     <div class="field hidden" id="customModelField" style="margin-top:10px;">
-      <label for="customModel">Custom model ID</label>
-      <input type="text" id="customModel" placeholder="e.g. claude-sonnet-5-5">
+      <label for="customModel">Własne ID modelu</label>
+      <input type="text" id="customModel" placeholder="np. claude-sonnet-5-5">
     </div>
     <div class="field" style="margin-top:14px;">
-      <label for="apiKey" id="keyLabel">API key</label>
+      <label for="apiKey" id="keyLabel">KLUCZ RUNICZNY (API KEY)</label>
       <div class="key-row">
         <input type="password" id="apiKey" autocomplete="off">
-        <button class="icon-btn" id="toggleKey" type="button" title="Show / hide key">👁</button>
+        <button class="icon-btn" id="toggleKey" type="button" title="Pokaż / ukryj klucz">👁</button>
       </div>
-      <label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.78rem;color:var(--muted);cursor:pointer;">
-        <input type="checkbox" id="rememberKey" style="width:14px;height:14px;">
-        Remember keys on this device
+      <label style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:0.75rem;color:var(--muted);cursor:pointer;">
+        <input type="checkbox" id="rememberKey" style="width:14px;height:14px;accent-color:var(--accent);">
+        Zapamiętaj klucze na tym urządzeniu
       </label>
       <div class="hint" id="keyHint"></div>
     </div>
@@ -55,40 +118,40 @@
   </div>
 
   <div class="card">
-    <h2>Your prompt</h2>
-    <textarea id="promptInput" placeholder="Paste your current prompt here..."></textarea>
+    <h2>[ ZAPIS INCANTACJI ]</h2>
+    <textarea id="promptInput" placeholder="Wklej swój prompt do ulepszenia..."></textarea>
     <div class="meta-row">
-      <span class="char-count" id="charCount">0 characters</span>
-      <button class="clear-link" id="clearPrompt" type="button">Clear</button>
+      <span class="char-count" id="charCount">0 znaków</span>
+      <button class="clear-link" id="clearPrompt" type="button">[WYCZYŚĆ]</button>
     </div>
     <div class="actions">
-      <button class="primary" id="boostBtn" type="button">🚀 BOOST</button>
-      <button class="primary" id="qaBtn" type="button">💬 Q&amp;A</button>
+      <button class="primary" id="boostBtn" type="button">RZUĆ ZAKLĘCIE (BOOST)</button>
+      <button class="primary" id="qaBtn" type="button">DIALOG (Q&amp;A)</button>
     </div>
   </div>
 
   <div class="card hidden" id="boostCard">
     <div class="result-header">
-      <h2 style="margin:0;">Improved prompt</h2>
-      <button class="copy-btn" id="copyBoost" type="button">Copy</button>
+      <h2 style="margin:0;">[ GOTOWY MANUSKRYPT ]</h2>
+      <button class="copy-btn" id="copyBoost" type="button">KOPIUJ</button>
     </div>
     <div id="boostContent"></div>
   </div>
 
   <div class="card hidden" id="qaCard">
-    <h2>Q&amp;A session</h2>
+    <h2>[ DIALOG Q&amp;A ]</h2>
     <div class="chat-container" id="chatContainer"></div>
     <div class="chat-input-row">
-      <textarea id="chatInput" placeholder="Type your answer... (Enter = send, Shift+Enter = new line)"></textarea>
+      <textarea id="chatInput" placeholder="Wpisz odpowiedź... (Enter = wyślij, Shift+Enter = nowa linia)"></textarea>
     </div>
     <div class="chat-buttons">
-      <button class="send" id="sendChat" type="button">Send</button>
-      <button class="finalize" id="finalizeChat" type="button">✅ Generate final prompt</button>
+      <button class="send" id="sendChat" type="button">WYŚLIJ</button>
+      <button class="finalize" id="finalizeChat" type="button">WYGENERUJ MANUSKRYPT</button>
     </div>
   </div>
 
   <footer>
-    Requests go straight from your browser to the selected provider. No other server is involved.
+    Zapytania trafiają bezpośrednio z przeglądarki do wybranego dostawcy AI. Żaden pośredniczący serwer nie bierze w tym udziału.
   </footer>
 
 </div>

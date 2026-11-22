@@ -174,7 +174,7 @@ $("updateModels").addEventListener("click", async () => {
     return;
   }
   const btn = $("updateModels");
-  setBusy(btn, true, "↻ Update");
+  setBusy(btn, true, "UPDATE");
   const results = await Promise.allSettled(withKeys.map(id => listModels(id, state.keys[id])));
   const ok = [], failed = [];
   results.forEach((r, i) => {
@@ -187,7 +187,7 @@ $("updateModels").addEventListener("click", async () => {
     }
   });
   await local.set({ modelTiers: state.modelLists });
-  setBusy(btn, false, "↻ Update");
+  setBusy(btn, false, "UPDATE");
   renderProviderUI();
   await saveState();
 
@@ -256,8 +256,8 @@ $("copyBoost").addEventListener("click", () => {
   const block = $("boostContent").querySelector(".result-block");
   if (!block) return;
   navigator.clipboard.writeText(block.textContent).then(() => {
-    $("copyBoost").textContent = "Copied ✓";
-    setTimeout(() => $("copyBoost").textContent = "Copy", 1500);
+    $("copyBoost").textContent = "Skopiowano ✓";
+    setTimeout(() => $("copyBoost").textContent = "KOPIUJ", 1500);
   });
 });
 
@@ -265,10 +265,10 @@ $("copyBoost").addEventListener("click", () => {
 $("boostBtn").addEventListener("click", async () => {
   hideBanner();
   const prompt = promptInput.value.trim();
-  if (!prompt) { showBanner("Enter a prompt to improve first."); return; }
+  if (!prompt) { showBanner("Wpisz najpierw prompt do ulepszenia."); return; }
   $("qaCard").classList.add("hidden");
   const btn = $("boostBtn");
-  setBusy(btn, true, "🚀 BOOST");
+  setBusy(btn, true, "RZUĆ ZAKLĘCIE (BOOST)");
   try {
     const raw = await ask(
       [{ role: "user", content: `Here is my current prompt to improve:\n\n"""\n${prompt}\n"""` }],
@@ -278,7 +278,7 @@ $("boostBtn").addEventListener("click", async () => {
   } catch (e) {
     showBanner(e.message);
   } finally {
-    setBusy(btn, false, "🚀 BOOST");
+    setBusy(btn, false, "RZUĆ ZAKLĘCIE (BOOST)");
   }
 });
 
@@ -315,7 +315,7 @@ $("qaBtn").addEventListener("click", async () => {
   }];
   appendBubble("user", "Starting a Q&A session for the prompt above.");
   const btn = $("qaBtn");
-  setBusy(btn, true, "💬 Q&A");
+  setBusy(btn, true, "DIALOG (Q&A)");
   const thinking = thinkingBubble();
   try {
     const raw = await ask(qaHistory, qaSystemPrompt(state.provider));
@@ -325,7 +325,7 @@ $("qaBtn").addEventListener("click", async () => {
     showBanner(e.message);
   } finally {
     thinking.remove();
-    setBusy(btn, false, "💬 Q&A");
+    setBusy(btn, false, "DIALOG (Q&A)");
   }
   $("qaCard").scrollIntoView({ behavior: "smooth", block: "nearest" });
 });
